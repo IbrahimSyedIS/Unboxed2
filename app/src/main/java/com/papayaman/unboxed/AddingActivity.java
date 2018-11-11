@@ -24,8 +24,6 @@ public class AddingActivity extends AppCompatActivity {
         final Button submit = findViewById(R.id.submitButton);
         submit.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                Intent back = new Intent(AddingActivity.this, MapsActivity.class);
-                startActivity(back);
                 String date = ((EditText) findViewById(R.id.textView2)).getText().toString();
                 String address = ((EditText) findViewById(R.id.textView4)).getText().toString();
                 Geocoder g = new Geocoder(AddingActivity.this);
@@ -42,6 +40,8 @@ public class AddingActivity extends AppCompatActivity {
                 double m = Double.parseDouble(date.substring(2,4));
                 double y = Double.parseDouble(date.substring(4,6));
                 MapsActivity.getClient().sendToServer(d, m, y, lat, lng);
+                Intent back = new Intent(AddingActivity.this, MapsActivity.class);
+                startActivity(back);
             }
         });
     }

@@ -49,7 +49,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 .addApi(LocationServices.API).build();
         mFusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
         mGoogleApiClient.connect();
-        client = new Client("35.221.38.36", 8765);
+        client = new Client("35.199.9.147", 8765);
         ArrayList<Double[]> markers = client.getMarkers();
     }
 
@@ -68,6 +68,18 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     @Override
     public void onConnectionSuspended(int i) {
         mGoogleApiClient.connect();
+    }
+
+    @Override
+    protected void onDestroy() {
+        client.close();
+        try {
+            client.join();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        super.onDestroy();
+
     }
 
     /**
