@@ -113,7 +113,10 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         Log.i("onMapReady", "YOOOO THERE: " + lati[0]);
         // Add a marker in Sydney and move the camera
         LatLng sydney = new LatLng(lati[0], longi[0]);
-        mMap.addMarker(new MarkerOptions().position(sydney).title("Marker in Sydney"));
+        for (Double[] marker : client.getMarkers()) {
+            mMap.addMarker(new MarkerOptions().position(new LatLng(marker[0], marker[1])).title(marker[2] + "\\" + marker[3] + "\\" + marker[4]));
+        }
+        //mMap.addMarker(new MarkerOptions().position(sydney).title("Marker in Sydney"));
         mMap.moveCamera(CameraUpdateFactory.newLatLng(sydney));
     }
 }
