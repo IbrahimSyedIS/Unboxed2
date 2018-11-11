@@ -57,7 +57,14 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         mFusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
         mGoogleApiClient.connect();
         client = new Client("papayaman.com", 8765);
-        ArrayList<Double[]> markers = client.getMarkers();
+        try{
+            Thread.sleep(1000);
+        } catch (InterruptedException ie) {
+            ie.printStackTrace();
+        }
+        for (Double[] marker : client.getMarkers()) {
+            mMap.addMarker(new MarkerOptions().position(new LatLng(marker[0], marker[1])).title(marker[2] + "\\" + marker[3] + "\\" + marker[4]));
+        }
     }
 
     public static Client getClient() {
@@ -113,9 +120,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         Log.i("onMapReady", "YOOOO THERE: " + lati[0]);
         // Add a marker in Sydney and move the camera
         LatLng sydney = new LatLng(lati[0], longi[0]);
-        for (Double[] marker : client.getMarkers()) {
-            mMap.addMarker(new MarkerOptions().position(new LatLng(marker[0], marker[1])).title(marker[2] + "\\" + marker[3] + "\\" + marker[4]));
-        }
         //mMap.addMarker(new MarkerOptions().position(sydney).title("Marker in Sydney"));
         mMap.moveCamera(CameraUpdateFactory.newLatLng(sydney));
     }

@@ -36,10 +36,10 @@ public class AddingActivity extends AppCompatActivity {
                 }
                 double lat = a.getLatitude();
                 double lng = a.getLongitude();
-                double d = Double.parseDouble(date.substring(0,2));
-                double m = Double.parseDouble(date.substring(2,4));
+                double m = Double.parseDouble(date.substring(0,2));
+                double d = Double.parseDouble(date.substring(2,4));
                 double y = Double.parseDouble(date.substring(4,6));
-                MapsActivity.getClient().sendToServer(d, m, y, lat, lng);
+                MapsActivity.getClient().send(new Double[]{lat,lng,m,d,y});
                 Intent back = new Intent(AddingActivity.this, MapsActivity.class);
                 startActivity(back);
             }
