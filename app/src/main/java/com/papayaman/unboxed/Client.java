@@ -32,7 +32,7 @@ public class Client {
         return markers;
     }
 
-    public static void sendToServer(String date, double lat, double lng) {
+    public static void sendToServer(double d, double m, double y, double lat, double lng) {
 
     }
 }

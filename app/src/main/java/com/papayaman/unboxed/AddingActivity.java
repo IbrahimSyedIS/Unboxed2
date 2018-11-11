@@ -12,6 +12,7 @@ import android.widget.TextView;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Locale;
 
 public class AddingActivity extends AppCompatActivity {
 
@@ -28,12 +29,19 @@ public class AddingActivity extends AppCompatActivity {
                 String date = ((EditText) findViewById(R.id.textView2)).getText().toString();
                 String address = ((EditText) findViewById(R.id.textView4)).getText().toString();
                 Geocoder g = new Geocoder(AddingActivity.this);
+                Address a = null;
                 try {
-                    Address a = g.getFromLocationName(address, 1).get(0);
+                    a = g.getFromLocationName(address, 1).get(0);
                 } catch (IOException e) {
                     e.printStackTrace();
+                    a = new Address(Locale.ENGLISH);
                 }
-                
+                double lat = a.getLatitude();
+                double lng = a.getLongitude();
+                double d = Double.parseDouble(date.substring(0,2));
+                double m = Double.parseDouble(date.substring(2,4));
+                double y = Double.parseDouble(date.substring(4,6));
+                MapsActivity.getClient().sendToServer(d, m, y, lat, lng);
             }
         });
     }
