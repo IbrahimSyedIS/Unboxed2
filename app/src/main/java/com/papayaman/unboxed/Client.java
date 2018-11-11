@@ -28,6 +28,7 @@ public class Client extends Thread {
             ois = new ObjectInputStream(socket.getInputStream());
             getData();
             while (!lock) {}
+            System.out.println("Working now");
             sendToServer(marker);
         } catch (Exception e) {
             e.printStackTrace();
@@ -52,6 +53,7 @@ public class Client extends Thread {
 
     private void sendToServer(Double[] marker) {
         try {
+            System.out.println("SENDING MARKER NOW MIKE");
             DataOutputStream dos = new DataOutputStream(socket.getOutputStream());
             dos.writeDouble(marker[0]);
             dos.writeDouble(marker[1]);
