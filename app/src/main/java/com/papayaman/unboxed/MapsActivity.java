@@ -57,6 +57,10 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
     }
 
+    public Client getClient() {
+        return client;
+    }
+
     @Override
     public void onConnected(@Nullable Bundle bundle) {
     }
