@@ -35,6 +35,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
     private static Client client;
 
+    private ArrayList<Double[]> markers;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -62,9 +64,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         } catch (InterruptedException ie) {
             ie.printStackTrace();
         }
-        for (Double[] marker : client.getMarkers()) {
-            mMap.addMarker(new MarkerOptions().position(new LatLng(marker[0], marker[1])).title(marker[2] + "\\" + marker[3] + "\\" + marker[4]));
-        }
+        markers = new ArrayList<>();
+        markers.addAll(client.getMarkers());
     }
 
     public static Client getClient() {
@@ -122,5 +123,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         LatLng sydney = new LatLng(lati[0], longi[0]);
         //mMap.addMarker(new MarkerOptions().position(sydney).title("Marker in Sydney"));
         mMap.moveCamera(CameraUpdateFactory.newLatLng(sydney));
+        for (Double[] marker : markers) {
+            mMap.addMarker(new MarkerOptions().position(new LatLng(marker[0], marker[1])).title(Integer.parseInt(marker[2] + "") + "\\" + Integer.parseInt(marker[3] + "") + "\\" + Integer.parseInt(marker[4] + "")));
+        }
     }
 }

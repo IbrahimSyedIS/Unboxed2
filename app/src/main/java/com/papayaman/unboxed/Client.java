@@ -44,6 +44,9 @@ public class Client extends Thread {
 
     private void getData() throws ClassNotFoundException, IOException {
         markers = (ArrayList<Double[]>)ois.readObject();
+        System.out.println("...................................................");
+        System.out.println(markers);
+        System.out.println("...................................................");
     }
 
     public ArrayList<Double[]> getMarkers() {
@@ -58,6 +61,7 @@ public class Client extends Thread {
             dos.writeDouble(marker[2]);
             dos.writeDouble(marker[3]);
             dos.writeDouble(marker[4]);
+            System.out.println(Arrays.toString(marker));
             dos.flush();
         } catch (IOException e) {
             e.printStackTrace();
