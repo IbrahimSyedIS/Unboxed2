@@ -1,4 +1,5 @@
 <resources>
     <string name="app_name">Unboxed</string>
     <string name="title_activity_unboxed__map">Unboxed</string>
+    <string name="title_activity_maps">Unboxed</string>
 </resources>
