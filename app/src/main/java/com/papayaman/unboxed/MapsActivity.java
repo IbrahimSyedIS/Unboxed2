@@ -124,7 +124,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         //mMap.addMarker(new MarkerOptions().position(sydney).title("Marker in Sydney"));
         mMap.moveCamera(CameraUpdateFactory.newLatLng(sydney));
         for (Double[] marker : markers) {
-            mMap.addMarker(new MarkerOptions().position(new LatLng(marker[0], marker[1])).title(Integer.parseInt(marker[2] + "") + "\\" + Integer.parseInt(marker[3] + "") + "\\" + Integer.parseInt(marker[4] + "")));
+            mMap.addMarker(new MarkerOptions().position(new LatLng(marker[0], marker[1])).title(marker[2].intValue() + "\\" + marker[3].intValue() + "\\" + marker[4].intValue()));
         }
     }
 }
