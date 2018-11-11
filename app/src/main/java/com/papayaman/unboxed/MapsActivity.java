@@ -68,17 +68,14 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
         LocationManager myLocManager;
-        double lati;
-        double longi;
+        double lati = -34;
+        double longi = 151;
         try {
             Location lastLoc = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
             lati = lastLoc.getLatitude();
             longi = lastLoc.getLongitude();
         } catch (SecurityException e) {
             e.printStackTrace();
-        } finally {
-            lati = -34;
-            longi = 151;
         }
 
         // Add a marker in Sydney and move the camera
