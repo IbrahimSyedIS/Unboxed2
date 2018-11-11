@@ -24,10 +24,11 @@
         android:layout_height="40dp"
         android:layout_marginTop="8dp"
         android:text="ddmmyy"
+        android:inputType="date"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/textView"
-        tools:text="@tools:sample/date/ddmmyy" />
+        tools:text="@tools:sample/date/mmddyy" />
 
     <TextView
         android:id="@+id/textView3"

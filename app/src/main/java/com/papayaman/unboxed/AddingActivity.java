@@ -25,6 +25,7 @@ public class AddingActivity extends AppCompatActivity {
         submit.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 String date = ((EditText) findViewById(R.id.textView2)).getText().toString();
+                System.out.println(date);
                 String address = ((EditText) findViewById(R.id.textView4)).getText().toString();
                 Geocoder g = new Geocoder(AddingActivity.this);
                 Address a = null;
