@@ -51,13 +51,9 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         mGoogleApiClient.connect();
         client = new Client("35.221.38.36", 12312);
         ArrayList<Double[]> markers = client.getMarkers();
-        //Make static field client; ClientSocket
-        //
-
-
     }
 
-    public Client getClient() {
+    public static Client getClient() {
         return client;
     }
 
