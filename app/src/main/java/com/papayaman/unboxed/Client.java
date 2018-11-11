@@ -7,7 +7,6 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.net.Socket;
 import java.util.ArrayList;
-import java.util.Arrays;
 
 public class Client extends Thread {
 
@@ -26,7 +25,7 @@ public class Client extends Thread {
         try {
             socket = new Socket(host, port);
             ois = new ObjectInputStream(socket.getInputStream());
-            getData();
+            markers = (ArrayList<Double[]>) ois.readObject();
             while (!lock) {}
             System.out.println("Working now");
             sendToServer(marker);
@@ -43,27 +42,18 @@ public class Client extends Thread {
         start();
     }
 
-    private void getData() throws ClassNotFoundException, IOException {
-        markers = (ArrayList<Double[]>)ois.readObject();
-        System.out.println("...................................................");
-        System.out.println(markers);
-        System.out.println("...................................................");
-    }
-
     public ArrayList<Double[]> getMarkers() {
         return markers;
     }
 
     private void sendToServer(Double[] marker) {
         try {
-            System.out.println("SENDING MARKER NOW MIKE");
             DataOutputStream dos = new DataOutputStream(socket.getOutputStream());
             dos.writeDouble(marker[0]);
             dos.writeDouble(marker[1]);
             dos.writeDouble(marker[2]);
             dos.writeDouble(marker[3]);
             dos.writeDouble(marker[4]);
-            System.out.println(Arrays.toString(marker));
             dos.flush();
         } catch (IOException e) {
             e.printStackTrace();
@@ -80,12 +70,7 @@ public class Client extends Thread {
     }
 
     public void send(Double[] marker) {
-        this.marker[0] = marker[0];
-        this.marker[1] = marker[1];
-        this.marker[2] = marker[2];
-        this.marker[3] = marker[3];
-        this.marker[4] = marker[4];
-        System.out.println(Arrays.toString(marker));
+        this.marker = marker;
         this.lock = true;
     }
 }

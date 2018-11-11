@@ -58,7 +58,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 .addApi(LocationServices.API).build();
         mFusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
         mGoogleApiClient.connect();
-        client = new Client("papayaman.com", 8765);
+        client = new Client("35.236.224.203", 8765);
         try{
             Thread.sleep(1000);
         } catch (InterruptedException ie) {
