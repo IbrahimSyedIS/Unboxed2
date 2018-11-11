@@ -23,6 +23,8 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.tasks.OnSuccessListener;
 
+import java.util.ArrayList;
+
 public class MapsActivity extends FragmentActivity implements OnMapReadyCallback, ConnectionCallbacks, OnConnectionFailedListener {
 
     private GoogleMap mMap;
@@ -30,6 +32,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private GoogleApiClient mGoogleApiClient;
 
     private FusedLocationProviderClient mFusedLocationClient;
+
+    private static Client client;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -45,7 +49,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 .addApi(LocationServices.API).build();
         mFusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
         mGoogleApiClient.connect();
-
+        client = new Client("35.221.38.36", 12312);
+        ArrayList<Double[]> markers = client.getMarkers();
         //Make static field client; ClientSocket
         //
 
