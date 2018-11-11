@@ -49,7 +49,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 .addApi(LocationServices.API).build();
         mFusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
         mGoogleApiClient.connect();
-        client = new Client("35.221.38.36", 12312);
+        client = new Client("35.221.38.36", 8765);
         ArrayList<Double[]> markers = client.getMarkers();
     }
 

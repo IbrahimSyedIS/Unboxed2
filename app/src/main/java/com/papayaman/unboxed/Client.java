@@ -32,6 +32,8 @@ public class Client {
         return markers;
     }
 
+    
+
     public static void sendToServer(String date, double lat, double lng) {
 
     }
