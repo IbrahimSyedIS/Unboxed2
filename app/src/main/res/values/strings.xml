@@ -2,4 +2,9 @@
     <string name="app_name">Unboxed</string>
     <string name="title_activity_unboxed__map">Unboxed</string>
     <string name="title_activity_maps">Unboxed</string>
+    <string name="example_address">1 Maple Street, New York City, NY</string>
+    <string name="address_prompt">Enter the sale\'s address:</string>
+    <string name="date_prompt">Enter date of garage sale:</string>
+    <string name="add_sale_button">Add Garage Sale</string>
+    <string name="submit">Submit</string>
 </resources>

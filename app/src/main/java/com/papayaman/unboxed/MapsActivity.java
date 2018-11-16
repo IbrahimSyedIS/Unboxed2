@@ -61,16 +61,11 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         mFusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
         mGoogleApiClient.connect();
         client = new Client("192.168.1.25", 8765);
-        try{
-            Thread.sleep(1000);
-        } catch (InterruptedException ie) {
-            ie.printStackTrace();
-        }
         markers = new ArrayList<>();
         markers.addAll(client.getMarkers());
     }
 
-    public static Client getClient() {
+    static Client getClient() {
         return client;
     }
 
@@ -108,9 +103,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 public void onSuccess(Location location) {
                     if (location != null) {
                         lati[0] = location.getLatitude();
-                        Log.i("onMapReady", "" + lati[0]);
                         longi[0] = location.getLongitude();
-                        System.out.println(longi[0]);
+                        Log.i("onMapReady", "" + lati[0]);
                     }
                 }
             });
@@ -122,9 +116,9 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         }
         Log.i("onMapReady", "YOOOO THERE: " + lati[0]);
         // Add a marker in Sydney and move the camera
-        LatLng sydney = new LatLng(lati[0], longi[0]);
+        LatLng currentLocation = new LatLng(lati[0], longi[0]);
         //mMap.addMarker(new MarkerOptions().position(sydney).title("Marker in Sydney"));
-        mMap.moveCamera(CameraUpdateFactory.newLatLng(sydney));
+        mMap.moveCamera(CameraUpdateFactory.newLatLng(currentLocation));
         for (Double[] marker : markers) {
             mMap.addMarker(new MarkerOptions().position(new LatLng(marker[0], marker[1])).title(String.format(Locale.getDefault(), "%02d", marker[2].intValue()) + "\\" + String.format(Locale.getDefault(), "%02d", marker[3].intValue()) + "\\" + String.format(Locale.getDefault(), "%02d", marker[4].intValue())));
         }
