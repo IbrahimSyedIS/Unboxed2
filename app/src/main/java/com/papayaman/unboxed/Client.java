@@ -19,14 +19,16 @@ public class Client extends Thread {
 
     private ArrayList<Double[]> markers;
     private Double[] marker = new Double[5];
-    private boolean lock = false;
+    private final Object lock = new Object();
 
     public void run() {
         try {
             socket = new Socket(host, port);
             ois = new ObjectInputStream(socket.getInputStream());
             markers = (ArrayList<Double[]>) ois.readObject();
-            while (!lock) {}
+            synchronized (lock) {
+                lock.wait();
+            }
             System.out.println("Working now");
             sendToServer(marker);
         } catch (Exception e) {
@@ -35,14 +37,14 @@ public class Client extends Thread {
         }
     }
 
-    public Client(String host, int port) {
+    Client(String host, int port) {
         this.host = host;
         this.port = port;
         markers = new ArrayList<>();
         start();
     }
 
-    public ArrayList<Double[]> getMarkers() {
+    ArrayList<Double[]> getMarkers() {
         return markers;
     }
 
@@ -69,8 +71,10 @@ public class Client extends Thread {
         }
     }
 
-    public void send(Double[] marker) {
+    void send(Double[] marker) {
         this.marker = marker;
-        this.lock = true;
+        synchronized (lock) {
+            lock.notify();
+        }
     }
 }

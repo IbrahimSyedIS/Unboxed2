@@ -1,5 +1,6 @@
 package com.papayaman.unboxed;
 
+import android.content.Context;
 import android.content.Intent;
 import android.location.Location;
 import android.support.annotation.NonNull;
@@ -24,6 +25,7 @@ import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.tasks.OnSuccessListener;
 
 import java.util.ArrayList;
+import java.util.Locale;
 
 public class MapsActivity extends FragmentActivity implements OnMapReadyCallback, ConnectionCallbacks, OnConnectionFailedListener {
 
@@ -58,7 +60,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 .addApi(LocationServices.API).build();
         mFusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
         mGoogleApiClient.connect();
-        client = new Client("35.236.224.203", 8765);
+        client = new Client("192.168.1.25", 8765);
         try{
             Thread.sleep(1000);
         } catch (InterruptedException ie) {
@@ -124,7 +126,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         //mMap.addMarker(new MarkerOptions().position(sydney).title("Marker in Sydney"));
         mMap.moveCamera(CameraUpdateFactory.newLatLng(sydney));
         for (Double[] marker : markers) {
-            mMap.addMarker(new MarkerOptions().position(new LatLng(marker[0], marker[1])).title(String.format("%02d", marker[2].intValue()) + "\\" + String.format("%02d", marker[3].intValue()) + "\\" + String.format("%02d", marker[4].intValue())));
+            mMap.addMarker(new MarkerOptions().position(new LatLng(marker[0], marker[1])).title(String.format(Locale.getDefault(), "%02d", marker[2].intValue()) + "\\" + String.format(Locale.getDefault(), "%02d", marker[3].intValue()) + "\\" + String.format(Locale.getDefault(), "%02d", marker[4].intValue())));
         }
     }
 }

@@ -22,15 +22,10 @@ public class AddingActivity extends AppCompatActivity implements DatePickerDialo
 
     private EditText datePicker;
 
-    private int month, day, year;
-
     @Override
     public void onDateSet(DatePicker view, int year, int month, int day) {
-        this.year = year;
-        this.month = month;
-        this.day = day;
         datePicker.setText(new StringBuilder()
-                .append(String.format("%02d", month + 1)).append("/").append(String.format("%02d", day)).append("/").append(String.format("%02d", year % 100)).append(" "));
+                .append(String.format(Locale.getDefault(), "%02d", month + 1)).append("/").append(String.format(Locale.getDefault(), "%02d", day)).append("/").append(String.format(Locale.getDefault(), "%02d", year % 100)).append(" "));
     }
 
     @Override
@@ -38,7 +33,7 @@ public class AddingActivity extends AppCompatActivity implements DatePickerDialo
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_adding);
 
-        datePicker = (EditText) findViewById(R.id.textView2);
+        datePicker = findViewById(R.id.textView2);
         datePicker.setFocusable(false);
         datePicker.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -59,12 +54,12 @@ public class AddingActivity extends AppCompatActivity implements DatePickerDialo
                 System.out.println(date);
                 String address = ((EditText) findViewById(R.id.textView4)).getText().toString();
                 Geocoder g = new Geocoder(AddingActivity.this);
-                Address a = null;
+                Address a;
                 try {
                     a = g.getFromLocationName(address, 1).get(0);
                 } catch (IOException e) {
                     e.printStackTrace();
-                    a = new Address(Locale.ENGLISH);
+                    a = new Address(Locale.getDefault());
                 }
                 double lat = a.getLatitude();
                 double lng = a.getLongitude();
