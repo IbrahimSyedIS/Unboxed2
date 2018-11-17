@@ -25,6 +25,7 @@ import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.tasks.OnSuccessListener;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Locale;
 
 public class MapsActivity extends FragmentActivity implements OnMapReadyCallback, ConnectionCallbacks, OnConnectionFailedListener {
@@ -37,7 +38,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
     private static Client client;
 
-    private ArrayList<Double[]> markers;
+    private ArrayList<Sale> sales;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -61,8 +62,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         mFusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
         mGoogleApiClient.connect();
         client = new Client("192.168.1.25", 8765);
-        markers = new ArrayList<>();
-        markers.addAll(client.getMarkers());
+        sales = new ArrayList<>();
+        sales.addAll(client.getSales());
     }
 
     static Client getClient() {
@@ -119,8 +120,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         LatLng currentLocation = new LatLng(lati[0], longi[0]);
         //mMap.addMarker(new MarkerOptions().position(sydney).title("Marker in Sydney"));
         mMap.moveCamera(CameraUpdateFactory.newLatLng(currentLocation));
-        for (Double[] marker : markers) {
-            mMap.addMarker(new MarkerOptions().position(new LatLng(marker[0], marker[1])).title(String.format(Locale.getDefault(), "%02d", marker[2].intValue()) + "\\" + String.format(Locale.getDefault(), "%02d", marker[3].intValue()) + "\\" + String.format(Locale.getDefault(), "%02d", marker[4].intValue())));
+        for (Sale sale : sales) {
+            mMap.addMarker(new MarkerOptions().position(new LatLng(sale.getLat(), sale.getLng())).title(String.format(Locale.getDefault(), "%02d", sale.getMonth()) + "/" + String.format(Locale.getDefault(), "%02d", sale.getDayOfMonth()) + "/" + String.format(Locale.getDefault(), "%02d", sale.getYear())));
         }
     }
 }
