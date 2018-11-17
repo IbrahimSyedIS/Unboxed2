@@ -21,9 +21,13 @@ import java.util.TimeZone;
 public class AddingActivity extends AppCompatActivity implements DatePickerDialog.OnDateSetListener {
 
     private EditText datePicker;
+    private int year, month, day;
 
     @Override
     public void onDateSet(DatePicker view, int year, int month, int day) {
+        this.year = year;
+        this.month = month;
+        this.day = day;
         datePicker.setText(new StringBuilder()
                 .append(String.format(Locale.getDefault(), "%02d", month + 1)).append("/").append(String.format(Locale.getDefault(), "%02d", day)).append("/").append(String.format(Locale.getDefault(), "%02d", year % 100)).append(" "));
     }
@@ -63,10 +67,7 @@ public class AddingActivity extends AppCompatActivity implements DatePickerDialo
                 }
                 double lat = a.getLatitude();
                 double lng = a.getLongitude();
-                double m = Double.parseDouble(date.substring(0,2));
-                double d = Double.parseDouble(date.substring(3,5));
-                double y = Double.parseDouble(date.substring(6,8));
-                MapsActivity.getClient().send(new Double[]{lat,lng,m,d,y});
+                MapsActivity.getClient().send(new Sale(lat,lng, month, day, year));
                 Intent back = new Intent(AddingActivity.this, MapsActivity.class);
                 startActivity(back);
             }
