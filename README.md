@@ -4,7 +4,6 @@ If at first you dont succeed win some google home minis
 
 
 TODO:   
--change when Client is initialized so it doesn't reconnect each time  
 -graphic design  
 -move map camera to current location fix  
 -add details to sales  
