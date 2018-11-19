@@ -44,4 +44,8 @@ public class Sale implements Serializable {
         return lng;
     }
 
+    public String toString() {
+        return (month + 1) + "/" + dayOfMonth + "/" + year + " at (" + lat + ", " + lng + ")";
+    }
+
 }

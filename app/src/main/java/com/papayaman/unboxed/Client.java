@@ -2,63 +2,103 @@ package com.papayaman.unboxed;
 
 import android.util.Log;
 
-import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
 import java.util.ArrayList;
+import java.util.Arrays;
 
 public class Client extends Thread {
 
-    private String host;
-    private int port;
+    private static String host = "papayaman.com";
+    private static int port = 8765;
+    private static Socket socket;
+    private static ObjectOutputStream oos;
+    private static ObjectInputStream ois;
 
-    private ArrayList<Sale> sales;
-    private Sale sale;
-    private final Object submitLock = new Object();
-    private final Object markerLock = new Object();
+    private static volatile Message message;
+    private static final Object waitLock = new Object();
+    private static final Object markerLock = new Object();
+
+    private static boolean running = false;
+    private static Client thread;
+
+    static void init() {
+        if (running)
+            throw new IllegalStateException("Client has already started!");
+        running = true;
+        thread = new Client();
+    }
+
+    static void disconnect() {
+        if (!running) {
+            throw new IllegalStateException("Can't stop if not running, that just doesnt make sense, like come on man.  You can't stop a thread if you havent started the thread, right?  Like why would you try to do that? idk man, it just doesnt make sense");
+        }
+        message = new Message(Message.Type.DISCONNECT);
+        synchronized (waitLock) {
+            waitLock.notify();
+        }
+    }
 
     public void run() {
         try {
-            Socket socket = new Socket(host, port);
-
-            ObjectOutputStream oos = new ObjectOutputStream(socket.getOutputStream());
-            oos.writeObject(new Message(Message.Type.GET_SALES));
-            oos.flush();
-
-            ObjectInputStream ois = new ObjectInputStream(socket.getInputStream());
-
-            Message message = (Message) ois.readObject();
-            if (message.getType().equals(Message.Type.SEND_SALES))
-                sales = message.getGarageSales();
-            synchronized (markerLock) {
-                markerLock.notify();
-            }
-            synchronized (submitLock) {
-                submitLock.wait();
-            }
-            Message toSend = new Message(Message.Type.ADD_SALE);
-            toSend.addNewSale(sale);
-            oos.writeObject(toSend);
-            oos.flush();
-            socket.close();
-        } catch (IOException ioe) {
-            ioe.printStackTrace();
+            socket = new Socket(host, port);
+            oos = new ObjectOutputStream(socket.getOutputStream());
+            ois = new ObjectInputStream(socket.getInputStream());
+        } catch (IOException e) {
+            e.printStackTrace();
             Log.e("Client/run", "Could not connect to: " + host + ":" + port);
-        } catch (InterruptedException | ClassNotFoundException e) {
+        }
+
+        while (true) {
+            synchronized (waitLock) {
+                try {
+                    waitLock.wait();
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+            try {
+                oos.writeObject(message);
+                oos.flush();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            if (message.getType().equals(Message.Type.GET_SALES)) {
+                try {
+                    message = (Message) ois.readUnshared();
+                    synchronized (markerLock){
+                        markerLock.notify();
+                    }
+                } catch (ClassNotFoundException | IOException e) {
+                    e.printStackTrace();
+                }
+            }
+            if (message.getType().equals(Message.Type.DISCONNECT))
+                break;
+        }
+        try {
+            socket.close();
+        } catch (IOException e) {
             e.printStackTrace();
         }
     }
 
-    Client(String host, int port) {
-        this.host = host;
-        this.port = port;
-        sales = new ArrayList<>();
+
+    private Client() {
+        super("NetworkingThread");
         start();
     }
 
-    ArrayList<Sale> getSales() {
+    static ArrayList<Sale> getSales() {
+        if (!running)
+            throw new IllegalStateException("Not initialized!");
+
+        message = new Message(Message.Type.GET_SALES);
+        synchronized (waitLock) {
+            waitLock.notify();
+        }
         synchronized (markerLock) {
             try {
                 markerLock.wait();
@@ -66,13 +106,17 @@ public class Client extends Thread {
                 e.printStackTrace();
             }
         }
-        return sales;
+        return message.getGarageSales();
     }
 
-    void send(Sale sale) {
-        this.sale = sale;
-        synchronized (submitLock) {
-            submitLock.notify();
+    static void sendNewSale(Sale sale) {
+        if (!running) throw new IllegalStateException("Cannot send if not initialized!");
+
+        message = new Message(Message.Type.ADD_SALE);
+        message.addNewSale(sale);
+
+        synchronized (waitLock) {
+            waitLock.notify();
         }
     }
 }

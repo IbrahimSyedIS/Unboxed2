@@ -67,7 +67,7 @@ public class AddingActivity extends AppCompatActivity implements DatePickerDialo
                 }
                 double lat = a.getLatitude();
                 double lng = a.getLongitude();
-                MapsActivity.getClient().send(new Sale(lat,lng, month, day, year));
+                Client.sendNewSale(new Sale(lat,lng, month, day, year));
                 Intent back = new Intent(AddingActivity.this, MapsActivity.class);
                 startActivity(back);
             }

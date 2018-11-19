@@ -13,7 +13,7 @@ public class Message implements Serializable {
     public enum Type {
         ADD_SALE,
         GET_SALES,
-        SEND_SALES,
+        SENDING_SALES,
         DISCONNECT
     }
 

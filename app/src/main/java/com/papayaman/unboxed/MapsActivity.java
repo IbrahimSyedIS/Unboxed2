@@ -1,6 +1,5 @@
 package com.papayaman.unboxed;
 
-import android.content.Context;
 import android.content.Intent;
 import android.location.Location;
 import android.support.annotation.NonNull;
@@ -25,30 +24,34 @@ import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.tasks.OnSuccessListener;
 
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Locale;
 
 public class MapsActivity extends FragmentActivity implements OnMapReadyCallback, ConnectionCallbacks, OnConnectionFailedListener {
 
     private GoogleMap mMap;
-
     private GoogleApiClient mGoogleApiClient;
-
     private FusedLocationProviderClient mFusedLocationClient;
 
-    private static Client client;
+    private ArrayList<Sale> sales = new ArrayList<>();
 
-    private ArrayList<Sale> sales;
+    private static boolean first = true;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        Log.e("TEST", "TTTTTTTTTTTTTTTTTTTTTEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEESSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSTTTTTTTTTTTTTTTTTTTTTTTTTTTTIIIIIIIIIIIIIIIIIIIIIINNNNNNNNNNNNNNNNNNNGGGGGGGGGGGGGGGGGGGGGGGGGG!!!!!!!!!!!!!!!!!!!");
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_maps);
+
+        if (first) {
+            first = false;
+            Client.init();
+        }
+
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
-                final Button button = findViewById(R.id.addButton);
+        final Button button = findViewById(R.id.addButton);
         button.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 Intent addSale = new Intent(MapsActivity.this, AddingActivity.class);
@@ -61,13 +64,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 .addApi(LocationServices.API).build();
         mFusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
         mGoogleApiClient.connect();
-        client = new Client("192.168.1.25", 8765);
-        sales = new ArrayList<>();
-        sales.addAll(client.getSales());
-    }
 
-    static Client getClient() {
-        return client;
+        sales.addAll(Client.getSales());
     }
 
     @Override
@@ -118,10 +116,16 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         Log.i("onMapReady", "YOOOO THERE: " + lati[0]);
         // Add a marker in Sydney and move the camera
         LatLng currentLocation = new LatLng(lati[0], longi[0]);
-        //mMap.addMarker(new MarkerOptions().position(sydney).title("Marker in Sydney"));
+//        mMap.addMarker(new MarkerOptions().position(currentLocation).title("Marker in Sydney"));
         mMap.moveCamera(CameraUpdateFactory.newLatLng(currentLocation));
         for (Sale sale : sales) {
-            mMap.addMarker(new MarkerOptions().position(new LatLng(sale.getLat(), sale.getLng())).title(String.format(Locale.getDefault(), "%02d", sale.getMonth()) + "/" + String.format(Locale.getDefault(), "%02d", sale.getDayOfMonth()) + "/" + String.format(Locale.getDefault(), "%02d", sale.getYear())));
+            mMap.addMarker(new MarkerOptions().position(new LatLng(sale.getLat(), sale.getLng())).title(String.format(Locale.getDefault(), "%02d", sale.getMonth() + 1) + "/" + String.format(Locale.getDefault(), "%02d", sale.getDayOfMonth()) + "/" + String.format(Locale.getDefault(), "%02d", sale.getYear())));
         }
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        Client.disconnect();
     }
 }
