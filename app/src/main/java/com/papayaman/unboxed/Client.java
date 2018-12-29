@@ -21,8 +21,9 @@ public class Client extends Thread {
     private static final Object waitLock = new Object();
     private static final Object markerLock = new Object();
 
-    private static boolean running = false;
+    private static volatile boolean running = false;
     private static Client thread;
+    private static volatile boolean requestReady;
 
     static void init() {
         if (running)
@@ -39,6 +40,7 @@ public class Client extends Thread {
         synchronized (waitLock) {
             waitLock.notify();
         }
+        running = false;
     }
 
     public void run() {
@@ -51,14 +53,18 @@ public class Client extends Thread {
             Log.e("Client/run", "Could not connect to: " + host + ":" + port);
         }
 
-        while (true) {
+        while (running) {
             synchronized (waitLock) {
-                try {
-                    waitLock.wait();
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
+                while (!requestReady) {
+                    try {
+                        waitLock.wait();
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
                 }
+                requestReady = false;
             }
+
             try {
                 oos.writeObject(message);
                 oos.flush();
@@ -96,7 +102,9 @@ public class Client extends Thread {
             throw new IllegalStateException("Not initialized!");
 
         message = new Message(Message.Type.GET_SALES);
+
         synchronized (waitLock) {
+            requestReady = true;
             waitLock.notify();
         }
         synchronized (markerLock) {
@@ -116,6 +124,7 @@ public class Client extends Thread {
         message.addNewSale(sale);
 
         synchronized (waitLock) {
+            requestReady = true;
             waitLock.notify();
         }
     }

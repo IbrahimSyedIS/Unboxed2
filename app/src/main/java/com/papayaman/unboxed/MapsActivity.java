@@ -35,10 +35,10 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private ArrayList<Sale> sales = new ArrayList<>();
 
     private static boolean first = true;
+    private static final Object obj = new Object();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        Log.e("TEST", "TTTTTTTTTTTTTTTTTTTTTEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEESSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSTTTTTTTTTTTTTTTTTTTTTTTTTTTTIIIIIIIIIIIIIIIIIIIIIINNNNNNNNNNNNNNNNNNNGGGGGGGGGGGGGGGGGGGGGGGGGG!!!!!!!!!!!!!!!!!!!");
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_maps);
 
@@ -69,7 +69,14 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     }
 
     @Override
+    protected void onResume() {
+        super.onResume();
+        Log.i("test","1");
+    }
+
+    @Override
     public void onConnected(@Nullable Bundle bundle) {
+        Log.i("test", "2");
     }
 
     @Override
@@ -129,3 +136,5 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         Client.disconnect();
     }
 }
+
+/* TODO: make the displaying of markers independent from map loading, fix thread stuff so it stops being slow, continue work on networking, multithreading, and stability */
