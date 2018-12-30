@@ -1,9 +1,14 @@
 package com.papayaman.unboxed;
 
+import android.Manifest;
+import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.location.Location;
+import android.location.LocationManager;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -26,7 +31,7 @@ import com.google.android.gms.tasks.OnSuccessListener;
 import java.util.ArrayList;
 import java.util.Locale;
 
-public class MapsActivity extends FragmentActivity implements OnMapReadyCallback, ConnectionCallbacks, OnConnectionFailedListener {
+public class MapsActivity extends FragmentActivity implements OnMapReadyCallback, ConnectionCallbacks, OnConnectionFailedListener, ActivityCompat.OnRequestPermissionsResultCallback{
 
     private GoogleMap mMap;
     private GoogleApiClient mGoogleApiClient;
@@ -34,8 +39,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
     private ArrayList<Sale> sales = new ArrayList<>();
 
+    // might be unnecessary not really sure tbh
     private static boolean first = true;
-    private static final Object obj = new Object();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -71,7 +76,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     @Override
     protected void onResume() {
         super.onResume();
-        Log.i("test","1");
+        Log.i("test", "1");
     }
 
     @Override
@@ -100,34 +105,40 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     @Override
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
-        final double[] lati = new double[1];
-        final double[] longi = new double[1];
 
-        try {
-            mFusedLocationClient.getLastLocation().addOnSuccessListener(this, new OnSuccessListener<Location>() {
-                @Override
-                public void onSuccess(Location location) {
-                    if (location != null) {
-                        lati[0] = location.getLatitude();
-                        longi[0] = location.getLongitude();
-                        Log.i("onMapReady", "" + lati[0]);
-                    }
-                }
-            });
-
-        } catch (SecurityException e) {
-            e.printStackTrace();
-            lati[0] = -34;
-            longi[0] = 151;
+        LocationManager locationManager = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
+        assert locationManager != null;
+        LatLng lastKnownCoords = new LatLng(0, 0);
+        float zoom = 0;
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(this, new String[]{"android.permission.ACCESS_COARSE_LOCATION", "android.permission.ACCESS_FINE_LOCATION"}, 0);
+            // TODO: Consider calling
+            //    ActivityCompat#requestPermissions
+            // here to request the missing permissions, and then overriding
+            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+            //                                          int[] grantResults)
+            // to handle the case where the user grants the permission. See the documentation
+            // for ActivityCompat#requestPermissions for more details.
+        } else {
+            Location lastKnownLocation = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+            if (lastKnownLocation == null) {
+                lastKnownLocation = locationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
+                if (lastKnownLocation == null)
+                    lastKnownLocation = new Location(LocationManager.PASSIVE_PROVIDER);
+            }
+            lastKnownCoords = new LatLng(lastKnownLocation.getLatitude(), lastKnownLocation.getLongitude());
+            zoom = 10;
         }
-        Log.i("onMapReady", "YOOOO THERE: " + lati[0]);
-        // Add a marker in Sydney and move the camera
-        LatLng currentLocation = new LatLng(lati[0], longi[0]);
-//        mMap.addMarker(new MarkerOptions().position(currentLocation).title("Marker in Sydney"));
-        mMap.moveCamera(CameraUpdateFactory.newLatLng(currentLocation));
+        Log.i("onMapReady", "YOOOO THERE: " + lastKnownCoords.latitude);
+        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(lastKnownCoords, zoom));
         for (Sale sale : sales) {
             mMap.addMarker(new MarkerOptions().position(new LatLng(sale.getLat(), sale.getLng())).title(String.format(Locale.getDefault(), "%02d", sale.getMonth() + 1) + "/" + String.format(Locale.getDefault(), "%02d", sale.getDayOfMonth()) + "/" + String.format(Locale.getDefault(), "%02d", sale.getYear())));
         }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
     }
 
     @Override
@@ -138,4 +149,4 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     }
 }
 
-/* TODO: make the displaying of markers independent from map loading, fix thread stuff so it stops being slow, continue work on networking, multithreading, and stability */
+/* TODO: make the displaying of markers independent from map loading, continue work on networking, multithreading, and stability */
