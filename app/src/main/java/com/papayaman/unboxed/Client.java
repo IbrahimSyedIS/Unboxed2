@@ -11,7 +11,8 @@ import java.util.Arrays;
 
 public class Client extends Thread {
 
-    private static String host = "papayaman.com";
+    // Just use whatever ip you're running the server on while developing
+    private static String host = "192.168.1.25";//"papayaman.com";
     private static int port = 8765;
     private static Socket socket;
     private static ObjectOutputStream oos;
@@ -51,6 +52,7 @@ public class Client extends Thread {
         } catch (IOException e) {
             e.printStackTrace();
             Log.e("Client/run", "Could not connect to: " + host + ":" + port);
+            return;
         }
 
         while (running) {
